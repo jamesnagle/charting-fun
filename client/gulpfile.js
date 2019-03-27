@@ -20,45 +20,38 @@ function js() {
         .pipe(rollup({
             plugins: [
                 resolve(),
-                babel({
-                    "exclude": "node_modules/**/",
-                    "presets": [
-                        "@babel/preset-env", 
-                        "@babel/preset-react"
-                    ],
-                    "plugins": [
-                        "styled-jsx/babel"
-                    ]
+                babel(),
+                commonjs({
+                    include: 'node_modules/**',
+                    namedExports: {
+                        'node_modules/react/index.js': [
+                            'Component',
+                            'PureComponent',
+                            'Fragment',
+                            'Children',
+                            'createElement'
+                        ]
+                    }
                 }),
-                commonjs(),
                 replace({
                     'process.env.NODE_ENV': JSON.stringify( 'production' )
                 })
-            ]
-        }, 'iife'))
-        .pipe(sourcemaps.write(''))
-        .pipe(dest('public/js'))
-}
-
-function buildjs() {
-    return src('src/js/app.js')
-        .pipe(sourcemaps.init())
-        .pipe(rollup({
-            plugins: [
-                resolve(),
-                babel({
-                    "exclude": "node_modules/**/",
-                    "presets": [
-                        "@babel/preset-env", 
-                        "@babel/preset-react"
-                    ],
-                    "plugins": [
-                        "styled-jsx/babel"
-                    ]
-                }),
-                commonjs()
-            ]
-        }, 'iife'))
+            ],
+            external: [
+                'axios',
+                'react',
+                'react-dom'
+            ]    
+        }, {
+            output: {
+                'globals': {
+                    'axios': 'axios',
+                    'react': 'React',
+                    'react-dom': 'ReactDOM'
+                }
+            },
+            format: 'iife'
+        }))
         .pipe(uglify())
         .pipe(sourcemaps.write(''))
         .pipe(dest('public/js'))
@@ -72,8 +65,7 @@ async function watchJS() {
 }
 
 exports.js = js;
-exports.buildjs = buildjs;
 exports.sass = sass;
 exports.watch = parallel(watchSass, watchJS);
-exports.build = parallel(sass, buildjs);
+exports.build = parallel(sass, js);
 exports.default = parallel(sass, js, watchSass, watchJS);

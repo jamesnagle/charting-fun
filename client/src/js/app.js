@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
@@ -9,7 +9,7 @@ function log(data) {
     console.log(data);
 }
 
-class Ajaxer extends React.Component {
+class Ajaxer extends Component {
     constructor(props) {
         super(props);
         this.state = {
