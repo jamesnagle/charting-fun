@@ -3,10 +3,8 @@ const gulpSass = require('gulp-sass');
 const uglify = require('gulp-uglify-es').default;
 const sourcemaps = require('gulp-sourcemaps');
 const rollup = require('gulp-better-rollup');
-const babel = require('rollup-plugin-babel');
-const resolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
-const replace = require('rollup-plugin-replace');
+
+const gulpConfig = require('./gulp-config');
 
 function sass() {
     return src(['node_modules/bootstrap/scss/bootstrap-grid.scss', 'src/sass/**/*.scss'])
@@ -17,41 +15,7 @@ function sass() {
 function js() {
     return src('src/js/app.js')
         .pipe(sourcemaps.init())
-        .pipe(rollup({
-            plugins: [
-                resolve(),
-                babel(),
-                commonjs({
-                    include: 'node_modules/**',
-                    namedExports: {
-                        'node_modules/react/index.js': [
-                            'Component',
-                            'PureComponent',
-                            'Fragment',
-                            'Children',
-                            'createElement'
-                        ]
-                    }
-                }),
-                replace({
-                    'process.env.NODE_ENV': JSON.stringify( 'production' )
-                })
-            ],
-            external: [
-                'axios',
-                'react',
-                'react-dom'
-            ]    
-        }, {
-            output: {
-                'globals': {
-                    'axios': 'axios',
-                    'react': 'React',
-                    'react-dom': 'ReactDOM'
-                }
-            },
-            format: 'iife'
-        }))
+        .pipe(rollup(gulpConfig.rollupInput, gulpConfig.rollupOutput))
         .pipe(uglify())
         .pipe(sourcemaps.write(''))
         .pipe(dest('public/js'))
