@@ -1,26 +1,31 @@
 // require(black-scholes)
 // require(greeks)
+const Koa = require('koa');
+const Router = require('koa-router');
+const serve = require('koa-static');
+const logger = require('koa-logger');
+const bodyParser = require('koa-bodyParser');
 
-//const find = require('find');
-const { Importer, csvInterface } = require('./lib/importer');
-const { Persister, sqlitePersistanceInterface } = require('./lib/persistance');
-const { Hasher, objectHasherInterface, fileHasherInterface } = require('./lib/hasher');
-const { Cacher , fileCacheInterface } = require('./lib/cacher');
-const { DataSourcer, csvDataSource} = require('./lib/dataSourcer');
+const app = new Koa();
+const router = new Router();
 
-//const cache = new Cacher(fileCacheInterface);
-//cache.init(objectHasherInterface);
+const appPrefix = '/api/';
+const appVersion = 'v1';
 
-function syncDataSourceWithPersistance() {
-    const dataSource = new DataSourcer(csvDataSource);
-    const db = new Persister(sqlitePersistanceInterface);
-    const cache = new Cacher(fileCacheInterface);
-    cache.init(fileHasherInterface);
+app.use(bodyParser());
 
-    const importer = new Importer(csvInterface);
-    importer.init(db, cache, dataSource);
+router.post(`${appPrefix}${appVersion}/chart/`, async (ctx, next) => {
+    const toChart = ctx.request.body;
+    console.log(toChart);
 
-    importer.sync();
-}
+    ctx.body = {
+        status: 'ok'
+    };
+    await next();
+});
 
-syncDataSourceWithPersistance();
+app.use(serve(__dirname + '/../client/public'));
+app.use(logger());
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.listen(3000);
