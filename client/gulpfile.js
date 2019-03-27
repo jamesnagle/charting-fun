@@ -64,11 +64,11 @@ function buildjs() {
         .pipe(dest('public/js'))
 }
 
-function watchSass() {
-    return watch(['src/sass/**/*.scss'], sass);
+async function watchSass() {
+    return await watch(['src/sass/**/*.scss'], sass);
 }
-function watchJS() {
-    return watch(['src/js/**/*.js'], js);
+async function watchJS() {
+    return await watch(['src/js/**/*.js'], js);
 }
 
 exports.js = js;
