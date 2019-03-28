@@ -2,7 +2,10 @@ const moment = require('moment');
 
 class DateRange {
     constructor(predefined = null) {
-        if (this._isPredefined(predefined)) {
+        if (!predefined) {
+            return this;
+        }
+        if (this.isPredefined(predefined)) {
             this.predefined(predefined);
         } else {
             throw "Argument passed to DateRange constructor is invalid."
@@ -29,6 +32,10 @@ class DateRange {
     last30Days() {
         this.to = this.yesterday();
         this.from = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    }
+    last60Days() {
+        this.to = this.yesterday();
+        this.from = moment().subtract(60, 'days').format('YYYY-MM-DD');
     }
     last90Days() {
         this.to = this.yesterday();
@@ -110,7 +117,7 @@ class DateRange {
             to: this.to
         }
     }
-    _isPredefined(str) {
+    isPredefined(str) {
         return (str === 'LAST_7_DAYS'
             || str === 'LAST_14_DAYS' 
             || str === 'LAST_30_DAYS' 

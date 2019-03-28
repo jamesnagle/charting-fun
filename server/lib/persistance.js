@@ -1,6 +1,9 @@
 const Promise = require('bluebird');
 const sqlite = require('sqlite');
 
+const { securitiesSchemaInterface } = require('./model');
+const DateRange = require('./DateRange');
+
 const { Logger, consoleLoggerInterface } = require('./logger');
 const logger = new Logger(consoleLoggerInterface);
 
@@ -38,9 +41,29 @@ class Persister {
     transformResponse(resp) {
         return this.persist.transformResponse(resp);
     }
+    select(colsObj) {
+        this.persist.select(colsObj);
+        return this;
+    }
+    from(table) {
+        this.persist.from(table);
+        return this;
+    }
+    where(col, cond = null) {
+        this.persist.where(col, cond);
+        return this;
+    }
+    between(fromOrRange, to = null) {
+        this.persist.between(fromOrRange, to);
+        return this;
+    }
+    async get() {
+        return await this.persist.get()
+    }
 }
 
 const sqlitePersistanceInterface = {
+    _query: '',
     table: null,
     insert: async function (table, dataObj) {
         const db = await this._dbPromise();
@@ -56,9 +79,11 @@ const sqlitePersistanceInterface = {
         };
         const cols = Object.keys(normalizedData);
         const vals = Object.values(normalizedData);
+        vals[0] = "'"+vals[0]+"'";
         const colStr = cols.join(', ');
         const valueStr = vals.join(', ');
         const sql = 'INSERT INTO ' + table + ' (' + colStr + ') VALUES (' + valueStr + ')';
+        console.log(sql);
         return await db.run(sql);
         
     },
@@ -97,8 +122,52 @@ const sqlitePersistanceInterface = {
             lastID: resp.lastID,
             changes: resp.changes
         };
-    },    
-    _buildCreateQueryFromSchema: function(table, schema) {
+    },
+    select: function (colsObj = null) {
+        this._resetQuery();
+        let cols = '';
+
+        if (!colsObj) {
+            cols = '*';
+        } else {
+            const colsArray = Object.keys(securitiesSchemaInterface);
+            cols = colsArray.join(', ').trim();
+        }
+
+        this._query += `SELECT ${cols} `;
+
+        return this;
+    },
+    from: function (table) {
+        this._query += `FROM ${table} `;
+        return this;
+    },
+    where: function (col, cond = null) {
+        /**
+         * TODO: add cond (condition support)
+         * Shipping for BETWEEN only at the moment.
+         */
+        this._query += `WHERE ${col} `;
+        return this;
+    },
+    between: function (fromOrRange, to = null) {
+        let range = new DateRange();
+
+        if (!range.isPredefined(fromOrRange)) {
+            throw "Persistance.between() only supports predefinded ranges at the moment."
+        }
+        const btw = range.predefined(fromOrRange).get();
+        this._query += `BETWEEN '${btw.from}' AND '${btw.to}'`;
+        return this;
+    },
+    get: async function () {
+        const db = await this._dbPromise();
+        return await db.all(this._query);
+    },
+    _resetQuery: function () {
+        this._query = '';
+    },
+    _buildCreateQueryFromSchema: function (table, schema) {
         const colNameArray = Object.keys(schema);
 
         let subString = '(';

@@ -15,3 +15,5 @@ async function syncDataSourceWithPersistance() {
 
     await importer.sync();
 }
+
+module.exports = syncDataSourceWithPersistance;

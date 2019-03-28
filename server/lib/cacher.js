@@ -22,8 +22,8 @@ class Cacher {
     read(input) {
         return this.cacher.read(input);
     }
-    write(data) {
-        return this.cacher.write(data);
+    write(data, key = '', prefix = '') {
+        return this.cacher.write(data, key, prefix);
     }
     writeWithKey(hashKey, data) {
         return this.cacher.writeWithKey(hashKey, data);
@@ -66,9 +66,15 @@ const fileCacheInterface = {
             });
         });
     },
-    write: function (data, prefix = '') {
+    write: function (data, key = '', prefix = '') {
         return new Promise((resolve, reject) => {
-            const objHash = this.hasher.hash(data);
+            let objHash = '';
+            if (key === '') {
+                objHash = this.hasher.hash(data);
+            } else {
+                objHash = key;
+            }
+            
             const toSave = transform.encode(data);
             const buildPath = this._buildFilePath(objHash);
 
