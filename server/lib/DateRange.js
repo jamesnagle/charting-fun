@@ -12,50 +12,53 @@ class DateRange {
         if (!this._isDateFormat(from)) {
             throw "First argument passed to DateRange.custom() is invalid";
         }
-        if (!!this._isDateFormat(to)) {
+        if (!this._isDateFormat(to)) {
             throw "Second argument passed to DateRange.custom() is invalid";
         }
         this.to = to;
         this.from = from;
     }
     last7Days() {
-        this.to = this.today();
-        this.from = moment().subtract(7, 'days').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(7, 'days').format('YYYY-MM-DD');
     }
     last14Days() {
-        this.to = this.today();
-        this.from = moment().subtract(14, 'days').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(14, 'days').format('YYYY-MM-DD');
     }
     last30Days() {
-        this.to = this.today();
-        this.from = moment().subtract(30, 'days').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(30, 'days').format('YYYY-MM-DD');
     }
     last90Days() {
-        this.to = this.today();
-        this.from = moment().subtract(90, 'days').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(90, 'days').format('YYYY-MM-DD');
     }
     last6Months() {
-        this.to = this.today();
-        this.from = moment().subtract(6, 'months').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(6, 'months').format('YYYY-MM-DD');
     }
     lastYear() {
-        this.to = this.today();
-        this.from = moment().subtract(1, 'years').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(1, 'years').format('YYYY-MM-DD');
     }
     last2Years() {
-        this.to = this.today();
-        this.from = moment().subtract(2, 'years').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(2, 'years').format('YYYY-MM-DD');
     }
     last5Years() {
-        this.to = this.today();
-        this.from = moment().subtract(5, 'years').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(5, 'years').format('YYYY-MM-DD');
     }
     last10Years() {
-        this.to = this.today();
-        this.from = moment().subtract(10, 'years').format('YYY-MM-DD');
+        this.to = this.yesterday();
+        this.from = moment().subtract(10, 'years').format('YYYY-MM-DD');
+    }
+    yesterday() {
+        return moment().subtract(1, 'days').format('YYYY-MM-DD');
     }
     today() {
-        return moment().format('YYY-MM-DD');
+        return moment().format('YYYY-MM-DD');
     }
     predefined(str) {
         switch (str) {
