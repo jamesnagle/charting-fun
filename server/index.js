@@ -14,43 +14,16 @@ const appVersion = 'v1';
 
 app.use(bodyParser());
 
+const getDataFromCacheOrPersistance = require('./lib/getDataFromCacheOrPersistance');
 //const syncDataSourceWithPersistance = require('./lib/syncDataSourceWithPersistance');
 //syncDataSourceWithPersistance()
-
-
-const { Persister, sqlitePersistanceInterface } = require('./lib/persistance');
-const db = new Persister(sqlitePersistanceInterface);
-
-const { Cacher, fileCacheInterface } = require('./lib/cacher');
-const { objectHasherInterface } = require('./lib/hasher');
-const cache = new Cacher(fileCacheInterface);
-cache.init(objectHasherInterface)
-
-
-
 
 
 router.post(`${appPrefix}${appVersion}/chart/`, async (ctx, next) => {
 
     const toChart = ctx.request.body.chart;
 
-    const objHash = cache.hasher.hash(toChart);
-
-    const cacheResponse = await cache.has(objHash);
-
-    let data = [];
-    if (cacheResponse.isInCache === true) {
-        data = await cache.read(cacheResponse.hashKey)
-        if (data) {
-            console.log('Query data fetched from cache');
-        }
-    } else {
-        data = await db.select().from(toChart.security).where('Date').between(toChart.range).get();
-        const saved = await cache.write(data, cacheResponse.hashKey);
-        if (saved) {
-            console.log('Query added to cache');
-        }
-    }
+    const data = await getDataFromCacheOrPersistance(toChart);
 
     console.log(toChart);
 
