@@ -13,23 +13,34 @@ class Ajaxer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: 'none'
+            status: 'none',
+            data: []
         }
     }
     componentDidMount() {
+        this.chartRequest('TLT', 'LAST_60_DAYS', (resp) => {
+            this.setState({
+                status: resp.status,
+                data: resp.chart
+            });
+            console.log(resp.chart);
+        });
+    }
+    chartRequest(security, range, callback) {
         axios.post(`${appPrefix}${appVersion}/chart/`, {
             chart: {
-                security: 'SPY'
+                security,
+                range
             }
         })
         .then((resp) => {
-            this.setState({data: resp.data.status})
+            callback(resp.data)
         })
         .catch(log)
     }
     render() {
         return (
-            <p>Response: {this.state.data}</p>
+            <p>Response: {this.state.status}</p>
         )
     }
 }
