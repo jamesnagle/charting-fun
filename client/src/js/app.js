@@ -1,54 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
+import echarts from 'echarts';
 
-const appPrefix = '/api/';
-const appVersion = 'v1';
+import Chart from './components/Chart'
 
-function log(data) {
-    console.log(data);
-}
-
-class Ajaxer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            status: 'none',
-            data: []
-        }
-    }
-    componentDidMount() {
-        this.chartRequest('TLT', 'LAST_60_DAYS', (resp) => {
-            this.setState({
-                status: resp.status,
-                data: resp.chart
-            });
-            console.log(resp.chart);
-        });
-    }
-    chartRequest(security, range, callback) {
-        axios.post(`${appPrefix}${appVersion}/chart/`, {
-            chart: {
-                security,
-                range
-            }
-        })
-        .then((resp) => {
-            callback(resp.data)
-        })
-        .catch(log)
-    }
-    render() {
-        return (
-            <p>Response: {this.state.status}</p>
-        )
-    }
+const App = (props) => {
+    return (
+        <>
+            <h1>Testing 3</h1>
+            <Chart
+                name="My First Chart"
+                seriesName="Series Name"
+                type="candlestick"
+                symbol="TLT"
+                range="LAST_2_YEARS" />
+        </>
+    )
 }
 
 ReactDOM.render(
-    <>
-        <h1>Testing 3</h1>
-        <Ajaxer />
-    </>,
+    <App/>,
     document.getElementById('root')
 );

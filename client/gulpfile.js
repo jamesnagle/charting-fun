@@ -16,7 +16,7 @@ function js() {
     return src('src/js/app.js')
         .pipe(sourcemaps.init())
         .pipe(rollup(gulpConfig.rollupInput, gulpConfig.rollupOutput))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(sourcemaps.write(''))
         .pipe(dest('public/js'))
 }
