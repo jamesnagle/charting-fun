@@ -29,6 +29,4 @@ class BasicIterator {
     }
 }
 
-module.exports = {
-    BasicIterator
-}
+module.exports = BasicIterator;

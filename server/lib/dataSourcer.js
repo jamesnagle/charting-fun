@@ -3,7 +3,7 @@ const csv = require('fast-csv');
 const find = require('find');
 const path = require('path');
 
-const { BasicIterator } = require('./iterator');
+const BasicIterator = require('./iterator');
 const { CSV, localFileInterface } = require('./File');
 
 class DataSourcer {

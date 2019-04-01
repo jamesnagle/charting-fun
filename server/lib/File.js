@@ -1,7 +1,7 @@
 const fs = require('fs');
 const csv = require('fast-csv');
 const spigot = require('stream-spigot');
-const { BasicIterator } = require('./iterator');
+const BasicIterator = require('./iterator');
 
 class File {
     constructor(fileInterface) {
