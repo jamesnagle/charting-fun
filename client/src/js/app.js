@@ -1,18 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import echarts from 'echarts';
 
-import Chart from './components/Chart'
+import SimChart from './components/SimChart'
 
 const App = (props) => {
     return (
         <>
-            <h1>Testing 3</h1>
-            <Chart
-                name="My First Chart"
-                seriesName="Series Name"
-                type="candlestick"
-                symbol="TLT"
+            <h1>SPY Over Two Years</h1>
+            <p>PUTs purchased weekly $1 below median price at time of purchase.</p>
+            <SimChart
+                symbol="SPY"
                 range="LAST_2_YEARS" />
         </>
     )

@@ -239,8 +239,15 @@ class Chart extends Component {
     chartRequest(callback) {
         axios.post(`${appPrefix}${appVersion}/chart/`, {
             chart: {
-                security: this.props.symbol,
-                range: this.props.range
+                type: 'basicSimulation',
+                strategy: 'PUT',
+                security: 'TLT',
+                dateRange: 'LAST_2_YEARS',
+                amountAbove: null,
+                amountBelow: 1.00,
+                strikeDistance: 0.50,
+                purchaseInterval: 'weekly',   // daily, weekly, monthly,
+                avgDaysOut: 7
             }
         })
         .then((resp) => {
