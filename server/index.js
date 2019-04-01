@@ -14,18 +14,24 @@ const appVersion = 'v1';
 
 app.use(bodyParser());
 
+const BasicSimulation = require('./lib/BasicSimulation');
 const getDataFromCacheOrPersistance = require('./lib/getDataFromCacheOrPersistance');
-//const syncDataSourceWithPersistance = require('./lib/syncDataSourceWithPersistance');
-//syncDataSourceWithPersistance()
+const syncDataSourceWithPersistance = require('./lib/syncDataSourceWithPersistance');
+syncDataSourceWithPersistance()
 
 
 router.post(`${appPrefix}${appVersion}/chart/`, async (ctx, next) => {
 
     const toChart = ctx.request.body.chart;
 
-    const data = await getDataFromCacheOrPersistance(toChart);
+    let data = [];
 
-    console.log(toChart);
+    if (toChart.type === 'basicSimulation') {
+        const bSim = new BasicSimulation(toChart);
+        data = await bSim.run();
+    } else {
+        data = await getDataFromCacheOrPersistance(toChart);
+    }
 
     ctx.body = {
         chart: data,

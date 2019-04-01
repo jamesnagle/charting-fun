@@ -130,7 +130,7 @@ const sqlitePersistanceInterface = {
         if (!colsObj) {
             cols = '*';
         } else {
-            const colsArray = Object.keys(securitiesSchemaInterface);
+            const colsArray = Object.keys(colsObj);
             cols = colsArray.join(', ').trim();
         }
 

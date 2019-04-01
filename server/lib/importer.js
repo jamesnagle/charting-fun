@@ -1,6 +1,6 @@
 //const csv = require('fast-csv');
 const glob = require('glob');
-const { BasicIterator } = require('./iterator');
+const BasicIterator = require('./iterator');
 
 const { Logger, consoleLoggerInterface } = require('./logger');
 const logger = new Logger(consoleLoggerInterface);
@@ -129,7 +129,8 @@ const csvInterface = {
             /**
              * TODO: REMOVE .POP() CURRENTLY LIMITS IMPORT TO ONE .CSV
              */
-            const filePathIterator = new BasicIterator([sourcesFilePathArray.pop()]);
+            //const filePathIterator = new BasicIterator([sourcesFilePathArray.pop()]);
+            const filePathIterator = new BasicIterator(sourcesFilePathArray);
             const fpCount = filePathIterator.count();
             let iteration = 0;
             
